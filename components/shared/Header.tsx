@@ -11,13 +11,15 @@ const Header = () => {
   return (
     <header className="w-full border-b">
       <div className="wrapper flex items-center justify-between">
-
-        <Link className="w-36" href="/">
-          <Image src="/assets/images/logo.svg" width={128} height={128} alt="Evently" />
+        <Link href="/" className="w-36">
+          <Image
+            src="/assets/images/logo.svg" width={128} height={38}
+            alt="Evently logo"
+          />
         </Link>
 
         <SignedIn>
-          <nav className="md:flex-between hidden w-full max-w-sx">
+          <nav className="md:flex-between hidden w-full max-w-xs">
             <NavItems />
           </nav>
         </SignedIn>
@@ -27,14 +29,14 @@ const Header = () => {
             <UserButton afterSignOutUrl="/" />
             <MobileNav />
           </SignedIn>
-
           <SignedOut>
             <Button asChild className="rounded-full" size="lg">
-              <Link href="/sign-in">Login</Link>
+              <Link href="/sign-in">
+                Login
+              </Link>
             </Button>
           </SignedOut>
         </div>
-
       </div>
     </header>
   )
