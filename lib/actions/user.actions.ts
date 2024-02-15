@@ -1,23 +1,23 @@
-"use server"
+'use server'
 
-import { CreateUserParams, UpdateUserParams } from "@/types"
+import { revalidatePath } from 'next/cache'
+import { connectToDatabase } from '@/lib/database'
+
 import User from '@/lib/database/models/user.model'
-import Event from '@/lib/database/models/event.model'
 import Order from '@/lib/database/models/order.model'
+import Event from '@/lib/database/models/event.model'
+import { handleError } from '@/lib/utils'
 
-import { handleError } from "@/lib/utils";
-import { connectToDatabase } from "@/lib/database";
-import { revalidatePath } from "next/cache";
+import { CreateUserParams, UpdateUserParams } from '@/types'
 
-export const createUser = async (user: CreateUserParams) => {
+export async function createUser(user: CreateUserParams) {
   try {
-    await connectToDatabase();
+    await connectToDatabase()
 
-    const newUser = await User.create(user);
-    return JSON.parse(JSON.stringify(newUser));
-
+    const newUser = await User.create(user)
+    return JSON.parse(JSON.stringify(newUser))
   } catch (error) {
-    handleError(error);
+    handleError(error)
   }
 }
 
@@ -28,7 +28,6 @@ export async function getUserById(userId: string) {
     const user = await User.findById(userId)
 
     if (!user) throw new Error('User not found')
-
     return JSON.parse(JSON.stringify(user))
   } catch (error) {
     handleError(error)
@@ -42,7 +41,6 @@ export async function updateUser(clerkId: string, user: UpdateUserParams) {
     const updatedUser = await User.findOneAndUpdate({ clerkId }, user, { new: true })
 
     if (!updatedUser) throw new Error('User update failed')
-
     return JSON.parse(JSON.stringify(updatedUser))
   } catch (error) {
     handleError(error)
