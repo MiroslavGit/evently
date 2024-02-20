@@ -1,13 +1,15 @@
 "use client"
 
+import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 
 import { Button } from "@/components/ui/button"
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
-import Dropdown from "./Dropdown"
 import { Textarea } from "@/components/ui/textarea"
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import Dropdown from "./Dropdown"
+import { FileUploader } from "./FileUploader"
 
 import * as z from "zod"
 
@@ -20,6 +22,7 @@ type EventFormProps = {
 }
 
 const EventForm = ({ userId, type }: EventFormProps) => {
+  const [files, setFiles] = useState<File[]>([])
   const initialValues = eventDefaultValues;
 
   const form = useForm<z.infer<typeof eventFormSchema>>({
@@ -81,7 +84,11 @@ const EventForm = ({ userId, type }: EventFormProps) => {
             render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl className="h-72">
-                  <Textarea placeholder="File uploader" {...field} className="textarea rounded-2xl" />
+                  <FileUploader
+                    onFieldChange={field.onChange}
+                    imageUrl={field.value}
+                    setFiles={setFiles}
+                  />
                 </FormControl>
                 <FormMessage />
               </FormItem>
