@@ -7,6 +7,7 @@ import { handleError } from "../utils";
 
 import { CreateCategoryParams } from "@/types"
 
+// CREATE
 export const createCategory = async ({ categoryName }: CreateCategoryParams) => {
   try {
     await connectToDatabase();
@@ -19,6 +20,7 @@ export const createCategory = async ({ categoryName }: CreateCategoryParams) => 
   }
 }
 
+// GET
 export const getAllCategories = async () => {
   try {
     await connectToDatabase();

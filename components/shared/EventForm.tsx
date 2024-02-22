@@ -20,6 +20,7 @@ import { useUploadThing } from "@/lib/uploadthing";
 import * as z from "zod"
 
 import { eventFormSchema } from "@/lib/validator"
+import { createEvent } from "@/lib/actions/event.actions"
 import { eventDefaultValues } from "@/constants"
 import { useRouter } from "next/navigation"
 
@@ -55,16 +56,12 @@ const EventForm = ({ userId, type }: EventFormProps) => {
 
     if (type === 'Create') {
       try {
-        // const newEvent = await createEvent({
-        //   event: { ...values, imageUrl: uploadedImageUrl },
-        //   userId,
-        //   path: '/profile'
-        // })
+        const newEvent = await createEvent({ event: { ...values, imageUrl: uploadedImageUrl }, userId, path: '/profile' })
 
-        // if (newEvent) {
-        //   form.reset();
-        //   router.push(`/events/${newEvent._id}`)
-        // }
+        if (newEvent) {
+          form.reset();
+          router.push(`/events/${newEvent._id}`)
+        }
       } catch (error) {
         console.log(error);
       }
