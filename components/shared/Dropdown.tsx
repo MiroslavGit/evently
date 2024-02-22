@@ -1,9 +1,10 @@
-import { startTransition, useState } from "react"
+import { startTransition, useEffect, useState } from "react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { Input } from "../ui/input"
 
 import { ICategory } from "@/lib/database/models/category.model"
+import { createCategory, getAllCategories } from "@/lib/actions/category.actions"
 
 type DropdownProps = {
   value?: string
@@ -15,7 +16,20 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
   const [newCategory, setNewCategory] = useState('');
 
   const handleAddCategory = () => {
+    createCategory({ categoryName: newCategory.trim() }).then((category) => {
+      setCategories((prevState) => [...prevState, category])
+    })
   }
+
+  useEffect(() => {
+    const getCategories = async () => {
+      const categoryList = await getAllCategories();
+
+      categoryList && setCategories(categoryList as ICategory[])
+    }
+
+    getCategories();
+  }, [])
 
   return (
     <Select onValueChange={onChangeHandler} defaultValue={value}>
@@ -24,7 +38,7 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
       </SelectTrigger>
       <SelectContent>
         {categories.length > 0 && categories.map((category) => (
-          <SelectItem key={category.id} value={category.id}>
+          <SelectItem key={category._id} value={category._id} className="select-item p-regular-14">
             {category.name}
           </SelectItem>
         ))}
@@ -39,15 +53,13 @@ const Dropdown = ({ value, onChangeHandler }: DropdownProps) => {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogAction onClick={() => startTransition(handleAddCategory)}>Add</AlertDialogAction>
               <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={() => startTransition(handleAddCategory)}>Add</AlertDialogAction>
             </AlertDialogFooter>
           </AlertDialogContent>
         </AlertDialog>
-
       </SelectContent>
     </Select>
-
   )
 }
 
