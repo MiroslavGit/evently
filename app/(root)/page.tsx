@@ -4,6 +4,7 @@ import Image from "next/image";
 import Collection from "@/components/shared/Collection";
 import { Button } from "@/components/ui/button";
 import Search from "@/components/shared/Search";
+import CategoryFilter from "@/components/shared/CategoryFilter";
 
 import { getAllEvents } from "@/lib/actions/event.actions";
 import { SearchParamProps } from "@/types";
@@ -13,7 +14,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
   const category = (searchParams?.category as string) || '';
   const page = Number(searchParams?.page) || 1;
 
-  const events = await getAllEvents({ query: searchText, category, page, limit: 6 });
+  const events = await getAllEvents({ query: searchText, category, page, limit: 3 });
 
   return (
     <>
@@ -44,7 +45,7 @@ export default async function Home({ searchParams }: SearchParamProps) {
 
         <div className="flex w-full flex-col gap-5 md:flex-row">
           <Search />
-          CategoryFilter
+          <CategoryFilter />
         </div>
 
         <Collection
@@ -53,10 +54,9 @@ export default async function Home({ searchParams }: SearchParamProps) {
           emptyStateSubtext="Come back later"
           collectionType="All_Events"
           limit={6}
-          page={1}
+          page={page}
           totalPages={events?.totalPages}
         />
-
       </section>
     </>
   );
