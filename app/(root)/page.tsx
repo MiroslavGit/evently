@@ -3,10 +3,17 @@ import Image from "next/image";
 
 import Collection from "@/components/shared/Collection";
 import { Button } from "@/components/ui/button";
-import { getAllEvents } from "@/lib/actions/event.actions";
+import Search from "@/components/shared/Search";
 
-export default async function Home() {
-  const events = await getAllEvents({ query: '', category: '', page: 1, limit: 6 });
+import { getAllEvents } from "@/lib/actions/event.actions";
+import { SearchParamProps } from "@/types";
+
+export default async function Home({ searchParams }: SearchParamProps) {
+  const searchText = (searchParams?.query as string) || '';
+  const category = (searchParams?.category as string) || '';
+  const page = Number(searchParams?.page) || 1;
+
+  const events = await getAllEvents({ query: searchText, category, page, limit: 6 });
 
   return (
     <>
@@ -36,7 +43,7 @@ export default async function Home() {
         <h2 className="h2-bold">Trust by <br /> Thousands of Events</h2>
 
         <div className="flex w-full flex-col gap-5 md:flex-row">
-          Search
+          <Search />
           CategoryFilter
         </div>
 

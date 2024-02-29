@@ -1,12 +1,21 @@
 import React from 'react'
 import Image from 'next/image';
+import { auth } from '@clerk/nextjs';
+
+import Collection from '@/components/shared/Collection';
 
 import { SearchParamProps } from '@/types'
-import { getEventById } from '@/lib/actions/event.actions';
+import { getEventById, getEventsByUser, getRelatedEventsByCategory } from '@/lib/actions/event.actions';
 import { formatDateTime } from '@/lib/utils';
 
 const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) => {
+  const { sessionClaims } = auth();
+
+  const userId = sessionClaims?.userId as string;
   const event = await getEventById(id);
+
+  const relatedEventsByCategory = await getRelatedEventsByCategory({ categoryId: event.category._id, eventId: event._id, page: searchParams.page as string })
+  const relatedEventsByOrganizer = await getEventsByUser({ userId: userId, page: 1 })
 
   return (
     <>
@@ -65,10 +74,38 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
               <p className="p-medium-16 lg:p-regular-18">{event.description}</p>
               <p className="p-medium-16 lg:p-regular-18 truncate text-primary-500 underline">{event.url}</p>
             </div>
-
           </div>
         </div>
       </section >
+
+
+      {/* Similar EVENTS with the same category */}
+      <section className="wrapper my-8 flex flex-col gap-8 md:gap-12">
+        <h2 className="h2-bold">Similar events based on the same category</h2>
+        <Collection
+          data={relatedEventsByCategory?.data}
+          emptyTitle="No Events Found"
+          emptyStateSubtext="Come back later"
+          collectionType="All_Events"
+          limit={3}
+          page={searchParams.page as string}
+          totalPages={relatedEventsByCategory?.totalPages}
+        />
+      </section>
+
+      {/* Similar EVENTS with the same organizer */}
+      <section className="wrapper my-8 flex flex-col gap-8 md:gap-12">
+        <h2 className="h2-bold">Other events by  {event.organizer.firstName} {event.organizer.lastName}</h2>
+        <Collection
+          data={relatedEventsByOrganizer?.data}
+          emptyTitle="No Events Found"
+          emptyStateSubtext="Come back later"
+          collectionType="All_Events"
+          limit={3}
+          page={searchParams.page as string}
+          totalPages={relatedEventsByOrganizer?.totalPages}
+        />
+      </section>
     </>
   )
 }
