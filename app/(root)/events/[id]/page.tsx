@@ -3,9 +3,10 @@ import Image from 'next/image';
 import { auth } from '@clerk/nextjs';
 
 import Collection from '@/components/shared/Collection';
+import CheckoutButton from '@/components/shared/CheckoutButton';
 
 import { SearchParamProps } from '@/types'
-import { getEventById, getEventsByUser, getRelatedEventsByCategory } from '@/lib/actions/event.actions';
+import { getEventById, getEventsByUser, getEventsByCategory } from '@/lib/actions/event.actions';
 import { formatDateTime } from '@/lib/utils';
 
 const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) => {
@@ -14,7 +15,7 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
   const userId = sessionClaims?.userId as string;
   const event = await getEventById(id);
 
-  const relatedEventsByCategory = await getRelatedEventsByCategory({ categoryId: event.category._id, eventId: event._id, page: searchParams.page as string })
+  const relatedEventsByCategory = await getEventsByCategory({ categoryId: event.category._id, eventId: event._id, page: searchParams.page as string })
   const relatedEventsByOrganizer = await getEventsByUser({ userId: userId, page: 1 })
 
   return (
@@ -48,6 +49,8 @@ const EventDetails = async ({ params: { id }, searchParams }: SearchParamProps) 
                 </p>
               </div>
             </div>
+
+            <CheckoutButton event={event} />
 
             <div className="flex flex-col gap-5">
               <div className='flex gap-2 md:gap-3'>

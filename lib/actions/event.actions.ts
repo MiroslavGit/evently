@@ -9,7 +9,7 @@ import User from "../database/models/user.model"
 import Event from "../database/models/event.model"
 import Category from "../database/models/category.model"
 
-import { CreateEventParams, DeleteEventParams, GetAllEventsParams, GetEventsByUserParams, GetRelatedEventsByCategoryParams, UpdateEventParams } from "@/types"
+import { CreateEventParams, DeleteEventParams, GetAllEventsParams, GetEventsByUserParams, GetEventsByCategoryParams, UpdateEventParams } from "@/types"
 
 const populateEvent = (query: any) => {
   return query
@@ -138,7 +138,7 @@ export async function getEventsByUser({ userId, limit = 6, page }: GetEventsByUs
 }
 
 // GET RELATED EVENTS: EVENTS WITH SAME CATEGORY
-export async function getRelatedEventsByCategory({ categoryId, eventId, limit = 3, page = 1 }: GetRelatedEventsByCategoryParams) {
+export async function getEventsByCategory({ categoryId, eventId, limit = 3, page = 1 }: GetEventsByCategoryParams) {
   try {
     await connectToDatabase()
 
