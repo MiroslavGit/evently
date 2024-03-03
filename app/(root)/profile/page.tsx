@@ -7,6 +7,8 @@ import Collection from '@/components/shared/Collection'
 
 import { SearchParamProps } from '@/types'
 import { getEventsByUser } from '@/lib/actions/event.actions'
+import { getOrdersByUser } from '@/lib/actions/order.actions'
+import { IOrder } from '@/lib/database/models/order.model'
 
 const ProfilePage = async ({ searchParams }: SearchParamProps) => {
   const { sessionClaims } = auth();
@@ -15,7 +17,9 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
   const ordersPage = Number(searchParams?.ordersPage) || 1;
   const eventsPage = Number(searchParams?.eventsPage) || 1;
 
-  const organizedEvents = await getEventsByUser({ userId, page: 1 })
+  const orders = await getOrdersByUser({ userId, page: ordersPage })
+  const orderedEvents = orders?.data.map((order: IOrder) => order.event) || [];
+  const organizedEvents = await getEventsByUser({ userId, page: eventsPage })
 
   return (
     <>
@@ -32,8 +36,8 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
       </section>
 
       <section className="wrapper my-8">
-        {/*  <Collection
-         data={orderedEvents}
+        <Collection
+          data={orderedEvents}
           emptyTitle="No event tickets purchased yet"
           emptyStateSubtext="No worries - plenty of exciting events to explore!"
           collectionType="My_Tickets"
@@ -41,7 +45,7 @@ const ProfilePage = async ({ searchParams }: SearchParamProps) => {
           page={ordersPage}
           urlParamName="ordersPage"
           totalPages={orders?.totalPages}
-        /> */}
+        />
       </section>
 
       {/* Events Organized */}
